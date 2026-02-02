@@ -14,9 +14,8 @@ export function TopBar({ onHelpPress }: TopBarProps) {
   return (
     <View
       style={{ paddingTop: insets.top, backgroundColor: COLORS.darkBar }}
-      className="flex-row items-center justify-between px-4 pb-3"
-    >
-      <Text className="text-lg font-bold text-white">What's For Dinner</Text>
+      className="flex-row items-center justify-between px-4 pb-3">
+      <Text className="text-lg font-bold text-white">What&apos;s For Dinner</Text>
       <IconButton
         name="help-circle-outline"
         size={28}
