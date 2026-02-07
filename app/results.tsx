@@ -1,8 +1,8 @@
-import { View, Text, Image, Pressable, ScrollView } from 'react-native';
+import { View, Text, Image, Pressable, ScrollView, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useIngredientDetection } from '../src/hooks/useIngredientDetection';
 import { LoadingState } from '../src/components/results/LoadingState';
@@ -15,6 +15,16 @@ export default function Results() {
   const insets = useSafeAreaInsets();
   const { detect, ingredients, loading, error, reset, addIngredient, removeIngredient } =
     useIngredientDetection();
+  const [searchingRecipes, setSearchingRecipes] = useState(false);
+
+  const handleSearchRecipes = () => {
+    if (!ingredients || ingredients.length === 0) return;
+
+    setSearchingRecipes(true);
+    const ingredientNames = ingredients.map((i) => i.name).join(',');
+    router.push(`/recipes?ingredients=${encodeURIComponent(ingredientNames)}`);
+    setTimeout(() => setSearchingRecipes(false), 500);
+  };
 
   useEffect(() => {
     if (uri) {
@@ -34,7 +44,7 @@ export default function Results() {
 
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: insets.bottom + 20 }}>
+        contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: insets.bottom + 100 }}>
         {uri && (
           <Image
             source={{ uri }}
@@ -75,6 +85,26 @@ export default function Results() {
           </View>
         )}
       </ScrollView>
+
+      {!loading && !error && ingredients && ingredients.length > 0 && (
+        <View
+          style={{ paddingBottom: insets.bottom + 16 }}
+          className="absolute bottom-0 left-0 right-0 px-6">
+          <Pressable
+            onPress={handleSearchRecipes}
+            disabled={searchingRecipes}
+            className="flex-row items-center justify-center rounded-full bg-blue-500 py-4">
+            {searchingRecipes ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <>
+                <Ionicons name="search" size={20} color="#fff" />
+                <Text className="ml-2 text-base font-semibold text-white">Search for Recipes</Text>
+              </>
+            )}
+          </Pressable>
+        </View>
+      )}
     </View>
   );
 }

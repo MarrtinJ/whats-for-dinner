@@ -95,9 +95,10 @@ function parseIngredientResponse(responseText: string): DetectedIngredient[] {
       )
       .map((item) => ({
         name: item.name.toLowerCase().trim(),
-        confidence: ['high', 'medium', 'low'].includes(item.confidence)
-          ? item.confidence
-          : 'medium',
+        confidence:
+          item.confidence && ['high', 'medium', 'low'].includes(item.confidence)
+            ? item.confidence
+            : 'medium',
       }));
   } catch (error) {
     console.error('Failed to parse ingredient response:', error);
